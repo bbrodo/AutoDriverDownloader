@@ -72,11 +72,13 @@ namespace ConsoleApp3
                     string name = device["Name"]?.ToString().ToLower();
                     string deviceId = device["DeviceID"]?.ToString();
                     
+                    // Checks if device is a mouse or keyboard
                     if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(deviceId) && (name.Contains("mouse") ||
                          name.Contains("keyboard")))
                     {
                         Console.WriteLine($"Device: {name}");
 
+                        // Checks vendor map for a match
                         var match = Regex.Match(deviceId, @"VID_([0-9A-F]{4})&PID_([0-9A-F]{4})", RegexOptions.IgnoreCase);
                         if (match.Success)
                         {
@@ -85,6 +87,8 @@ namespace ConsoleApp3
                             Console.WriteLine($"  VID: {vid}, PID: {pid}");
 
                             string vendor = GetVendorName(vid);
+                            // adds drivers to driver list
+                            //WIP NEED TO MAKE A METHOD TO AUTOMATE THIS
                             if (vendor != null)
                             {   
                                 if (vendor.Contains("LOGITECH") && !driverList.Contains("LOGITECH"))
@@ -105,11 +109,12 @@ namespace ConsoleApp3
                 }
             }
             Console.WriteLine("Detected Driver: " + driverList[driverList.Count() - 1]);
-            //downloads files
+            //sends list of drivers to the download handler
             string[] driverArray = driverList.ToArray();
             downloadHandler(driverArray);
         }
 
+        // Vendor map used to decode VID of peripherals to get name of vendor
         static string GetVendorName(string vid)
         {
             var vendorMap = new Dictionary<string, string>
@@ -141,6 +146,7 @@ namespace ConsoleApp3
             string userNameRaw = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1];
             Console.WriteLine("\nCurrent User: " + userNameRaw);
 
+            // Url and Filename varibles for webclient downloads
             string activeUrl = null;
             string activeFileName = null;
 
@@ -153,10 +159,11 @@ namespace ConsoleApp3
             string logitechUrl = "https://download01.logi.com/web/ftp/pub/techsupport/gaming/lghub_installer.exe";
             string logitechFileName = "lghub_installer.exe";
 
-
+            // Webclient init
             WebClient webClient = new WebClient();
             webClient.Headers.Add("User-Agent: Other");
 
+            // Loop that tells webclient which drivers to download
             foreach (string driver in driverList)
             {
                 Console.WriteLine("\nDownloading " + driver + " drivers...");
@@ -180,6 +187,7 @@ namespace ConsoleApp3
                         activeFileName = logitechFileName;
                         break;
                 }
+                // Download runs for each driver in list
                 webClient.DownloadFile(activeUrl, @"C:\Users\" + userNameRaw + @"\Downloads\" + activeFileName);
                 Console.WriteLine("Download Complete");
             }
