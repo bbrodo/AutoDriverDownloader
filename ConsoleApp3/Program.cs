@@ -139,6 +139,19 @@ namespace ConsoleApp3
             //p.Start();
         }
 
+        // Driver dictionary stores urls for each driver
+        static string GetDriverUrl(string driver) {
+            var driverMap = new Dictionary<string, string>
+            {
+                {"NVIDIA", @"https://in.download.nvidia.com/GFE/GFEClient/3.28.0.417/GeForce_Experience_v3.28.0.417.exe" },
+                {"AMD", @"https://drivers.amd.com/drivers/installer/25.10/whql/amd-software-adrenalin-edition-25.5.1-minimalsetup-250513_web.exe" },
+                {"INTEL", @"https://downloadmirror.intel.com/850983/gfx_win_101.2135.exe" },
+                {"LOGITECH", @"https://download01.logi.com/web/ftp/pub/techsupport/gaming/lghub_installer.exe" }
+            };
+
+                return driverMap.TryGetValue(driver, out var url) ? url : null;
+        }
+
         //downloads files
         static void downloadHandler(string[] driverList)
         {
@@ -150,43 +163,22 @@ namespace ConsoleApp3
             string activeUrl = null;
             string activeFileName = null;
 
-            string nvidiaUrl = "https://in.download.nvidia.com/GFE/GFEClient/3.28.0.417/GeForce_Experience_v3.28.0.417.exe";
-            string nvidiaFileName = "GeForce_Experience_v3.28.0.417.exe";
-            string amdUrl = "https://drivers.amd.com/drivers/installer/25.10/whql/amd-software-adrenalin-edition-25.5.1-minimalsetup-250513_web.exe";
-            string amdFileName = "amd-software-adrenalin-edition-25.5.1-minimalsetup-250513_web.exe";
-            string intelUrl = "https://downloadmirror.intel.com/850983/gfx_win_101.2135.exe";
-            string intelFileName = "gfx_win_101.2135.exe";
-            string logitechUrl = "https://download01.logi.com/web/ftp/pub/techsupport/gaming/lghub_installer.exe";
-            string logitechFileName = "lghub_installer.exe";
-
             // Webclient init
             WebClient webClient = new WebClient();
             webClient.Headers.Add("User-Agent: Other");
+            webClient.Headers.Add("Referer", "https://www.amd.com/en/support/download/drivers.html");
 
             // Loop that tells webclient which drivers to download
             foreach (string driver in driverList)
             {
                 Console.WriteLine("\nDownloading " + driver + " drivers...");
-                switch (driver)
-                {
-                    case "AMD":
-                        activeUrl = amdUrl;
-                        activeFileName = amdFileName;
-                        webClient.Headers.Add("Referer", "https://www.amd.com/en/support/download/drivers.html");
-                        break;
-                    case "INTEL":
-                        activeUrl = intelUrl;
-                        activeFileName = intelFileName;
-                        break;
-                    case "NVIDIA":
-                        activeUrl = nvidiaUrl;
-                        activeFileName = nvidiaFileName;
-                        break;
-                    case "LOGITECH":
-                        activeUrl = logitechUrl;
-                        activeFileName = logitechFileName;
-                        break;
-                }
+
+                // gets driver url from dictionary
+                activeUrl = GetDriverUrl(driver);
+
+                // gets filename from url
+                activeFileName = activeUrl.Split('/')[activeUrl.Split('/').Length - 1];
+
                 // Download runs for each driver in list
                 webClient.DownloadFile(activeUrl, @"C:\Users\" + userNameRaw + @"\Downloads\" + activeFileName);
                 Console.WriteLine("Download Complete");
