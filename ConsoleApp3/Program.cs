@@ -120,15 +120,15 @@ namespace ConsoleApp3
             var vendorMap = new Dictionary<string, string>
         {
             { "046D", "LOGITECH" },
-            { "045E", "Microsoft" },
+            { "045E", "MICROSOFT" },
             { "1532", "RAZER" },
-            { "1E4E", "SteelSeries" },
+            { "1E4E", "STEELSERIES" },
             { "0B05", "ASUS" },
-            { "0C45", "Microdia" },
-            { "056E", "Elecom" },
-            { "04F2", "Chicony" },
-            { "054C", "Sony" },
-            { "28DE", "Valve" }
+            { "0C45", "MICRODIA" },
+            { "056E", "ELECOM" },
+            { "04F2", "CHICONY" },
+            { "054C", "SONY" },
+            { "28DE", "VALVE" }
         };
 
             return vendorMap.TryGetValue(vid, out var name) ? name : null;
@@ -145,8 +145,9 @@ namespace ConsoleApp3
             {
                 {"NVIDIA", @"https://in.download.nvidia.com/GFE/GFEClient/3.28.0.417/GeForce_Experience_v3.28.0.417.exe" },
                 {"AMD", @"https://drivers.amd.com/drivers/installer/25.10/whql/amd-software-adrenalin-edition-25.5.1-minimalsetup-250513_web.exe" },
-                {"INTEL", @"https://downloadmirror.intel.com/850983/gfx_win_101.2135.exe" },
-                {"LOGITECH", @"https://download01.logi.com/web/ftp/pub/techsupport/gaming/lghub_installer.exe" }
+                {"INTEL", @"https://dsadata.intel.com/installer" },
+                {"LOGITECH", @"https://download01.logi.com/web/ftp/pub/techsupport/gaming/lghub_installer.exe" },
+                {"RAZER", @"https://rzr.to/synapse-4-pc-download" }
             };
 
                 return driverMap.TryGetValue(driver, out var url) ? url : null;
@@ -168,20 +169,39 @@ namespace ConsoleApp3
             webClient.Headers.Add("User-Agent: Other");
             webClient.Headers.Add("Referer", "https://www.amd.com/en/support/download/drivers.html");
 
+
             // Loop that tells webclient which drivers to download
             foreach (string driver in driverList)
             {
-                Console.WriteLine("\nDownloading " + driver + " drivers...");
+                Console.WriteLine("\nDownload " + driver + " drivers? (Y/N): ");
+                Char answer = Convert.ToChar(Console.ReadLine().ToUpper());
 
-                // gets driver url from dictionary
-                activeUrl = GetDriverUrl(driver);
+                if (answer == 'Y')
+                {
+                    Console.WriteLine("\nDownloading " + driver + " drivers...");
 
-                // gets filename from url
-                activeFileName = activeUrl.Split('/')[activeUrl.Split('/').Length - 1];
+                    // gets driver url from dictionary
+                    activeUrl = GetDriverUrl(driver);
 
-                // Download runs for each driver in list
-                webClient.DownloadFile(activeUrl, @"C:\Users\" + userNameRaw + @"\Downloads\" + activeFileName);
-                Console.WriteLine("Download Complete");
+                    // gets filename from url
+                    // razer doesnt have filename in url so this checks if razer and adds filename manually
+                    switch (driver)
+                    {
+                        case "RAZER" :
+                            activeFileName = "RazerSynapseInstaller.exe";
+                            break;
+                        case "INTEL" :
+                            activeFileName = "Intel-Driver-and-Support-Assistant-Installer.exe";
+                            break;
+                        default :
+                            activeFileName = activeUrl.Split('/')[activeUrl.Split('/').Length - 1];
+                            break;
+                    }
+                    // Download runs for each driver in list
+                    webClient.DownloadFile(activeUrl, @"C:\Users\" + userNameRaw + @"\Downloads\" + activeFileName);
+                    Console.WriteLine("Download Complete");
+                }
+
             }
 
         }
