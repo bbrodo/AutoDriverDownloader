@@ -94,6 +94,7 @@ namespace ConsoleApp3
                                 if (vendor.Contains("LOGITECH") && !driverList.Contains("LOGITECH"))
                                 {
                                     driverList.Add("LOGITECH");
+                                    driverList.Add("ASUS");
                                 } else if (vendor.Contains("RAZER") && !driverList.Contains("RAZER"))
                                 {
                                     driverList.Add("RAZER");
@@ -119,16 +120,17 @@ namespace ConsoleApp3
         {
             var vendorMap = new Dictionary<string, string>
         {
-            { "046D", "LOGITECH" },
+            { "046D", "LOGITECH" }, // Y
             { "045E", "MICROSOFT" },
-            { "1532", "RAZER" },
-            { "1E4E", "STEELSERIES" },
-            { "0B05", "ASUS" },
+            { "1532", "RAZER" }, // Y
+            { "1E4E", "STEELSERIES" }, // Y
+            { "0B05", "ASUS" }, // Y
             { "0C45", "MICRODIA" },
             { "056E", "ELECOM" },
             { "04F2", "CHICONY" },
             { "054C", "SONY" },
-            { "28DE", "VALVE" }
+            { "28DE", "VALVE" },
+            { "1B1C", "CORSAIR"} // Y
         };
 
             return vendorMap.TryGetValue(vid, out var name) ? name : null;
@@ -147,7 +149,10 @@ namespace ConsoleApp3
                 {"AMD", @"https://drivers.amd.com/drivers/installer/25.10/whql/amd-software-adrenalin-edition-25.5.1-minimalsetup-250513_web.exe" },
                 {"INTEL", @"https://dsadata.intel.com/installer" },
                 {"LOGITECH", @"https://download01.logi.com/web/ftp/pub/techsupport/gaming/lghub_installer.exe" },
-                {"RAZER", @"https://rzr.to/synapse-4-pc-download" }
+                {"RAZER", @"https://rzr.to/synapse-4-pc-download" },
+                {"CORSAIR", @"https://www3.corsair.com/software/CUE_V5/public/modules/windows/installer/Install%20iCUE.exe?_gl=1*1cff191*_gcl_au*MjA5NTE4Njk1OC4xNzQ5ODc0OTM3" },
+                {"STEELSERIES", @"https://steelseries.com/gg/downloads/gg/latest/windows" },
+                {"ASUS", @"https://dlcdnets.asus.com/pub/ASUS/mb/14Utilities/ArmouryCrateInstallTool.zip?model=Armoury%20Crate" }
             };
 
                 return driverMap.TryGetValue(driver, out var url) ? url : null;
@@ -192,6 +197,15 @@ namespace ConsoleApp3
                             break;
                         case "INTEL" :
                             activeFileName = "Intel-Driver-and-Support-Assistant-Installer.exe";
+                            break;
+                        case "CORSAIR":
+                            activeFileName = "Install-iCUE.exe";
+                            break;
+                        case "STEELSERIES":
+                            activeFileName = "SteelSeriesGG88.0.0Setup.exe";
+                            break;
+                        case "ASUS":
+                            activeFileName = "ArmouryCrateInstallTool.zip";
                             break;
                         default :
                             activeFileName = activeUrl.Split('/')[activeUrl.Split('/').Length - 1];
