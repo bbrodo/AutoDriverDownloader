@@ -94,7 +94,6 @@ namespace ConsoleApp3
                                 if (vendor.Contains("LOGITECH") && !driverList.Contains("LOGITECH"))
                                 {
                                     driverList.Add("LOGITECH");
-                                    driverList.Add("ASUS");
                                 } else if (vendor.Contains("RAZER") && !driverList.Contains("RAZER"))
                                 {
                                     driverList.Add("RAZER");
